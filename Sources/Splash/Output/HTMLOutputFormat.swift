@@ -13,11 +13,24 @@ import Foundation
 /// a given string.
 public struct HTMLOutputFormat: OutputFormat {
     public var classPrefix: String
-
+    static var CSSBody: [Substring] = []
+    
     public init(classPrefix: String = "") {
         self.classPrefix = classPrefix
+        let CSSFile: String = "sundellsColors.css"
+        
+        if let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let fileURL = directory.appendingPathComponent(CSSFile)
+            
+            do {
+                HTMLOutputFormat.CSSBody = try String(contentsOf: fileURL, encoding: .utf8).split(separator: "\n")
+            } catch {
+                print("Error finding file \(CSSFile) in \(directory.path)")
+            }
+        }
+        
     }
-
+    
     public func makeBuilder() -> Builder {
         return Builder(classPrefix: classPrefix)
     }
@@ -29,9 +42,18 @@ public extension HTMLOutputFormat {
         private var html = ""
         private var pendingToken: (string: String, type: TokenType)?
         private var pendingWhitespace: String?
+        private var inline: Bool = true
 
         fileprivate init(classPrefix: String) {
             self.classPrefix = classPrefix
+            
+            if(inline) {
+                let style = getTillNextBracket(startFrom: 0)!.replacingOccurrences(of: "\n", with: "", options: .literal, range: nil).replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+                html.append(
+                    """
+                    <div style="\(style)">\n
+                    """)
+            }
         }
 
         public mutating func addToken(_ token: String, ofType type: TokenType) {
@@ -64,14 +86,25 @@ public extension HTMLOutputFormat {
 
         public mutating func build() -> String {
             appendPending()
+            html.append("\n</div>")
             return html
         }
 
         private mutating func appendPending() {
             if let pending = pendingToken {
-                html.append("""
-                <span class="\(classPrefix)\(pending.type.string)">\(pending.string.escapingHTMLEntities())</span>
-                """)
+                
+                if(self.inline) {
+                    html.append(
+                    """
+                    <span style="\(getCSSBody(classPrefix: pending.type.string).replacingOccurrences(of: " ", with: ""))">\(pending.string.escapingHTMLEntities())</span>
+                    """)
+                } else {
+                    html.append(
+                    """
+                    <span class="\(classPrefix)\(pending.type.string)">\(pending.string.escapingHTMLEntities())</span>
+                    """)
+                }
+                
 
                 pendingToken = nil
             }
@@ -81,5 +114,44 @@ public extension HTMLOutputFormat {
                 pendingWhitespace = nil
             }
         }
+        
+        public func getCSSBody(classPrefix: String) -> Substring {
+            guard let tokenIndex = HTMLOutputFormat.CSSBody.firstIndex(of: "pre code .\(classPrefix) {") else { return "" }
+            return HTMLOutputFormat.CSSBody[tokenIndex+1]
+        }
+        
+        public mutating func flipInline() {
+            self.inline = !self.inline
+        }
+    }
+    
+    static func getTillNextBracket(startFrom: Int) -> String? {
+        var firstBracket: Bool = false, secondBracket: Bool = false
+        var traversed: String = ""
+        
+        for line in CSSBody.enumerated() {
+            if(firstBracket) {
+                if(!secondBracket) {
+                    if(line.element.contains("}")) {
+                        secondBracket = true
+                        break
+                    } else {
+                        traversed += line.element
+                    }
+                }
+            } else {
+                if(line.element.contains("{")) {
+                    firstBracket = true
+                }
+            }
+            traversed += "\n"
+        }
+        
+        if(firstBracket && secondBracket) {
+            return traversed.replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+        } else {
+            return nil
+        }
+        
     }
 }

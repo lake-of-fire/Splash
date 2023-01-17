@@ -8,6 +8,8 @@ import Foundation
 
 /// Enum defining the possible types of tokens that can be highlighted
 public enum TokenType: Hashable {
+    public static var allCases: [TokenType] = [.keyword, .string, .type, .call, .number, .comment, .property, .dotAccess, .preprocessing]
+    
     /// A keyword, such as `if`, `class`, `let` or attributes such as @available
     case keyword
     /// A token that is part of a string literal
