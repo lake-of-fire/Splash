@@ -86,7 +86,7 @@ public extension HTMLOutputFormat {
 
         public mutating func build() -> String {
             appendPending()
-            html.append("\n</div>")
+            html.append("\n</div><br>")
             return html
         }
 
