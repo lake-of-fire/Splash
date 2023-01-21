@@ -17,18 +17,13 @@ public struct HTMLOutputFormat: OutputFormat {
     
     public init(classPrefix: String = "") {
         self.classPrefix = classPrefix
-        let CSSFile: String = "sundellsColors.css"
+        guard let CSSFileURL = Bundle.main.path(forResource: "sundellsColors", ofType: "css") else { return }
         
-        if let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let fileURL = directory.appendingPathComponent(CSSFile)
-            
-            do {
-                HTMLOutputFormat.CSSBody = try String(contentsOf: fileURL, encoding: .utf8).split(separator: "\n")
-            } catch {
-                print("Error finding file \(CSSFile) in \(directory.path)")
-            }
+        do {
+            HTMLOutputFormat.CSSBody = try String(contentsOf: URL(fileURLWithPath: CSSFileURL), encoding: .utf8).split(separator: "\n")
+        } catch {
+            print("Error finding file 'sundellsColors.css' in \(CSSFileURL)")
         }
-        
     }
     
     public func makeBuilder() -> Builder {
