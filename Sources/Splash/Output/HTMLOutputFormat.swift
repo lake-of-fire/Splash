@@ -88,29 +88,28 @@ public extension HTMLOutputFormat {
         private mutating func appendPending() {
             if let pending = pendingToken {
                 
-                if(pending.string == "{" || pending.string == "}" || pending.string.contains("\n")) {
-                    html.append("<br>")
+                if(self.inline) {
+                    html.append(
+                    """
+                    <span style="\(getCSSBody(classPrefix: pending.type.string).replacingOccurrences(of: " ", with: ""))">\(pending.string.escapingHTMLEntities())</span>
+                    """)
                 } else {
-                    if(self.inline) {
-                        html.append(
-                        """
-                        <span style="\(getCSSBody(classPrefix: pending.type.string).replacingOccurrences(of: " ", with: ""))">\(pending.string.escapingHTMLEntities())</span>
-                        """)
-                    } else {
-                        html.append(
-                        """
-                        <span class="\(classPrefix)\(pending.type.string)">\(pending.string.escapingHTMLEntities())</span>
-                        """)
-                    }
-                    
+                    html.append(
+                    """
+                    <span class="\(classPrefix)\(pending.type.string)">\(pending.string.escapingHTMLEntities())</span>
+                    """)
                 }
-
+                
 
                 pendingToken = nil
             }
 
             if let whitespace = pendingWhitespace {
-                html.append(whitespace)
+                if(whitespace == "\n") {
+                    html.append("<br>")
+                } else {
+                    html.append(whitespace)
+                }
                 pendingWhitespace = nil
             }
         }
