@@ -91,7 +91,7 @@ public extension HTMLOutputFormat {
                 if(self.inline) {
                     html.append(
                     """
-                    <span style="\(getCSSBody(classPrefix: pending.type.string).replacingOccurrences(of: " ", with: ""))">\(pending.string.escapingHTMLEntities())</span>
+                    <span style="\(getCSSBody(classPrefix: pending.type.string).replacingOccurrences(of: " ", with: ""))">\(pending.string.escapingHTMLEntities().replacingOccurrences(of: "\n", with: "<br>"))</span>
                     """)
                 } else {
                     html.append(
