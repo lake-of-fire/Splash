@@ -105,6 +105,7 @@ public extension HTMLOutputFormat {
             }
 
             if let whitespace = pendingWhitespace {
+                print("WHITESPACE DETECTED: (\(whitespace))")
                 if(whitespace == "\n") {
                     html.append("<br>")
                 } else {
