@@ -12,10 +12,6 @@ guard CommandLine.arguments.count > 1 else {
     exit(1)
 }
 
-let code =  """
-                func helloWorld(type: String) -> {
-                    return 1
-                }
-            """
+let code = CommandLine.arguments[1]
 let highlighter = SyntaxHighlighter(format: HTMLOutputFormat())
 print(highlighter.highlight(code))
