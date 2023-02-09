@@ -43,7 +43,8 @@ public extension HTMLOutputFormat {
             self.classPrefix = classPrefix
             
             if(inline) {
-                let style = getTillNextBracket(startFrom: 0)!.replacingOccurrences(of: "\n", with: "", options: .literal, range: nil).replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+                guard let fileExists = getTillNextBracket(startFrom: 0) else { return }
+                let style = fileExists.replacingOccurrences(of: "\n", with: "", options: .literal, range: nil).replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
                 html.append(
                     """
                     <div style="\(style)">\n
@@ -105,12 +106,8 @@ public extension HTMLOutputFormat {
             }
 
             if let whitespace = pendingWhitespace {
-                print("WHITESPACE DETECTED: (\(whitespace))")
-                if(whitespace == "\n") {
-                    html.append("<br>")
-                } else {
-                    html.append(whitespace)
-                }
+                html.append(whitespace)
+                
                 pendingWhitespace = nil
             }
         }
