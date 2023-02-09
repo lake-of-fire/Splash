@@ -37,7 +37,6 @@ private extension Tokenizer {
             enum Kind {
                 case token
                 case delimiter
-                case whitespace
             }
 
             let character: Character
@@ -95,28 +94,6 @@ private extension Tokenizer {
                 segment.tokens.current.append(component.character)
                 segments.current = segment
                 return next()
-            case .whitespace:
-                guard var segment = segments.current else {
-                    var segment = makeSegment(with: component, at: nextIndex)
-                    segment.trailingWhitespace = component.token
-                    segment.isLastOnLine = component.isNewline
-                    segments.current = segment
-                    return next()
-                }
-
-                if var existingWhitespace = segment.trailingWhitespace {
-                    existingWhitespace.append(component.character)
-                    segment.trailingWhitespace = existingWhitespace
-                } else {
-                    segment.trailingWhitespace = component.token
-                }
-
-                if component.isNewline {
-                    segment.isLastOnLine = true
-                }
-
-                segments.current = segment
-                return next()
             }
         }
 
@@ -130,9 +107,6 @@ private extension Tokenizer {
 
         private func makeComponent(at index: String.Index) -> Component {
             func kind(for character: Character) -> Component.Kind {
-                if character.isWhitespace {
-                    return .whitespace
-                }
 
                 if grammar.delimiters.contains(character) {
                     return .delimiter
@@ -198,7 +172,7 @@ extension Tokenizer.Iterator.Component {
 
     var isDelimiter: Bool {
         switch kind {
-        case .token, .whitespace:
+        case .token:
             return false
         case .delimiter:
             return true
@@ -207,18 +181,8 @@ extension Tokenizer.Iterator.Component {
 
     var isNewline: Bool {
         switch kind {
-        case .token, .whitespace, .delimiter:
+        case .token, .delimiter:
             return false
         }
-    }
-}
-
-private extension Character {
-    var isWhitespace: Bool {
-        return CharacterSet.whitespaces.contains(self)
-    }
-
-    var isNewline: Bool {
-        return CharacterSet.newlines.contains(self)
     }
 }
