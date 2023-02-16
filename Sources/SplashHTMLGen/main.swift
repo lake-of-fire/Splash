@@ -12,6 +12,21 @@ guard CommandLine.arguments.count > 1 else {
     exit(1)
 }
 
-let code = CommandLine.arguments[1]
+//let code = CommandLine.arguments[1]
+
+let code =      """
+                    func test(arg1: String) -> Int {
+                        if(true) {
+                            return 1
+                        } else {
+                            return 0
+                        }
+                    }
+
+                """
+
 let highlighter = SyntaxHighlighter(format: HTMLOutputFormat())
+
+
+
 print(highlighter.highlight(code))

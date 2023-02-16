@@ -18,8 +18,6 @@ internal extension StringProtocol {
                 return "&gt;"
             case "\n":
                 return "<br>"
-            case " ":
-                return "&#9;"
             default:
                 return String(character)
             }
