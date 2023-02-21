@@ -82,48 +82,8 @@ public extension HTMLOutputFormat {
 
         public mutating func build() -> String {
             appendPending()
-            html = html.replacingOccurrences(of: "\t", with: "")
-            html = html.replacingOccurrences(of: "    ", with: "")
-            
-            tabalize(htmlString: html)
             html.append("</div><br>")
             return html
-        }
-
-        func tabalize(htmlString: String) -> String {
-                
-            for (index, character) in htmlString.enumerated() {
-                if character == "{" {
-                    let strIndex = getNearestTagIndex(htmlString: htmlString, cursor: index)
-                }
-            }
-            return ""
-        }
-        
-        func getNearestTagIndex(htmlString: String, cursor: Int) -> String.Index? {
-            
-            print(htmlString[useRegex(for: htmlString, starting: cursor)!])
-            return nil
-            
-        }
-        
-        func useRegex(for text: String, starting: Int) -> Range<String.Index>? {
-            do {
-                let regex = try NSRegularExpression(pattern: "\\{<[A-Za-z]+><[A-Za-z]+ [A-Za-z]+=")
-                let range = NSRange(location: starting, length: text.count - starting)
-                let matches = regex.matches(in: text, options: [], range: range)
-
-                if let match = matches.first {
-                    let range = match.range(at: 0)
-                    if let swiftRange = Range(range, in: text) {
-                        return swiftRange
-                    }
-                }
-            } catch {
-                // regex was bad!
-            }
-            
-            return nil
         }
         
         private mutating func appendPending() {
