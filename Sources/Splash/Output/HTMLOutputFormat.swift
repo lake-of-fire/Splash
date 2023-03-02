@@ -84,7 +84,7 @@ public extension HTMLOutputFormat {
             appendPending()
             html.append("</div><br>")
 
-            html = html.replacingOccurrences(of: "    ", with: "&nbsp;&nbsp;&nbsp;&nbsp;")
+            html = html.replacingOccurrences(of: "\t", with: "&nbsp;&nbsp;&nbsp;&nbsp;")
             
             return html
         }
