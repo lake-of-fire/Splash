@@ -19,9 +19,11 @@ public struct SwiftGrammar: Grammar {
         delimiters.remove("#")
         delimiters.remove("@")
         delimiters.remove("$")
+        delimiters.remove("\t")
         self.delimiters = delimiters
 
         syntaxRules = [
+            TabulationRule(),
             PreprocessingRule(),
             CommentRule(),
             RawStringRule(),
@@ -96,6 +98,23 @@ private extension SwiftGrammar {
         "actor"
     ]
 
+    struct TabulationRule: SyntaxRule {
+        var tokenType: TokenType { return .tabulation }
+        private let strToken: Set<String> = ["\t"]
+        
+        func matches(_ segment: Segment) -> Bool {
+            if(segment.tokens.current.hasPrefix("\t")) {
+                return true
+            }
+            
+            if(segment.tokens.current.hasSuffix("\t")) {
+                return true
+            }
+            
+            return false
+        }
+    }
+    
     struct PreprocessingRule: SyntaxRule {
         var tokenType: TokenType { return .preprocessing }
         private let controlFlowTokens: Set<String> = ["#if", "#endif", "#elseif", "#else"]

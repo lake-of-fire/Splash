@@ -83,11 +83,17 @@ public extension HTMLOutputFormat {
         public mutating func build() -> String {
             appendPending()
             html.append("</div><br>")
+
+            
+            
             return html
         }
         
+        
         private mutating func appendPending() {
             if let pending = pendingToken {
+                
+                print("Token Type: \(pending.type) || \(pending.string)")
                 
                 if(self.inline) {
                     html.append(

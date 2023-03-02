@@ -38,7 +38,7 @@ private extension Tokenizer {
                 case token
                 case delimiter
                 case whitespace
-                case tabulation
+                case tab
             }
 
             let character: Character
@@ -72,7 +72,7 @@ private extension Tokenizer {
             let component = makeComponent(at: nextIndex)
 
             switch component.kind {
-            case .token, .delimiter, .tabulation:
+            case .token, .delimiter, .tab:
                 guard var segment = segments.current else {
                     segments.current = makeSegment(with: component, at: nextIndex)
                     return next()
@@ -132,10 +132,15 @@ private extension Tokenizer {
 
         private func makeComponent(at index: String.Index) -> Component {
             func kind(for character: Character) -> Component.Kind {
-
-                if character.isWhitespace {
+                
+                if character == "\t" {
+                    return .tab
+                }
+                
+                if character == " " {
                     return .whitespace
                 }
+                
                 
                 if grammar.delimiters.contains(character) {
                     return .delimiter
@@ -201,7 +206,7 @@ extension Tokenizer.Iterator.Component {
 
     var isDelimiter: Bool {
         switch kind {
-        case .token, .whitespace, .tabulation:
+        case .token, .whitespace, .tab:
             return false
         case .delimiter:
             return true
@@ -210,19 +215,22 @@ extension Tokenizer.Iterator.Component {
 
     var isNewline: Bool {
         switch kind {
-        case .token, .whitespace, .delimiter, .tabulation:
-            return false
+            case .token, .whitespace, .delimiter, .tab:
+                return false
+            default:
+                return true
         }
     }
     
-    var isTabulation: Bool {
+    var isTab: Bool {
         switch kind {
-        case .token, .delimiter, .whitespace:
-            return false
-        case .tabulation:
-            return true
+            case .token, .whitespace, .delimiter:
+                return false
+            case .tab:
+                return true
         }
     }
+    
 }
 
 private extension Character {
