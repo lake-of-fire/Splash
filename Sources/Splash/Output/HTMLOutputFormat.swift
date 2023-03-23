@@ -18,7 +18,7 @@ public struct HTMLOutputFormat: OutputFormat {
     public init(classPrefix: String = "") {
         self.classPrefix = classPrefix
         guard let CSSFileURL = Bundle.main.path(forResource: "sundellsColors", ofType: "css") else { return }
-        
+
         do {
             HTMLOutputFormat.CSSBody = try String(contentsOf: URL(fileURLWithPath: CSSFileURL), encoding: .utf8).split(separator: "\n")
         } catch {
@@ -82,18 +82,15 @@ public extension HTMLOutputFormat {
 
         public mutating func build() -> String {
             appendPending()
-            html.append("</div><br>")
-
-            html = html.replacingOccurrences(of: "\t", with: "&nbsp;&nbsp;&nbsp;&nbsp;")
-            
+            html.append("\n</div><br>")
+            html = html.replacingOccurrences(of: "    ", with: "&nbsp;&nbsp;&nbsp;&nbsp;")
             return html
         }
-        
-        
+
         private mutating func appendPending() {
             if let pending = pendingToken {
                 
-                print("Token Type: \(pending.type) || \(pending.string)")
+                print("Current Token: \(pending.string) --- \(pending.type)")
                 
                 if(self.inline) {
                     html.append(
@@ -113,7 +110,6 @@ public extension HTMLOutputFormat {
 
             if let whitespace = pendingWhitespace {
                 html.append(whitespace)
-                
                 pendingWhitespace = nil
             }
         }

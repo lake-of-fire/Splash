@@ -7,26 +7,18 @@
 import Foundation
 import Splash
 
-guard CommandLine.arguments.count > 1 else {
-    print("⚠️  Please supply the code to generate HTML for as a string argument")
-    exit(1)
-}
+//guard CommandLine.arguments.count > 1 else {
+//    print("⚠️  Please supply the code to generate HTML for as a string argument")
+//    exit(1)
+//}
 
-//let code = CommandLine.arguments[1]
-
-let code =      """
-                    func test(arg1: String) -> Int {
-                        if(true) {
-                            return 1
-                        } else {
-                            return 0
-                        }
-                    }
-
-                """
-
+let code = """
+            // testing
+            if(true) {
+                print("hello world")
+            } else {
+                print("unreachable")
+            }
+            """
 let highlighter = SyntaxHighlighter(format: HTMLOutputFormat())
-
-
-
-print("\n\n\(highlighter.highlight(code))")
+print(highlighter.highlight(code))
