@@ -19,7 +19,6 @@ public struct SwiftGrammar: Grammar {
         delimiters.remove("#")
         delimiters.remove("@")
         delimiters.remove("$")
-        delimiters.remove("\t")
         self.delimiters = delimiters
 
         syntaxRules = [
@@ -84,7 +83,7 @@ private extension SwiftGrammar {
         "continue", "fallthrough", "repeat", "indirect",
         "deinit", "is", "#file", "#line", "#function",
         "dynamic", "some", "#available", "convenience", "unowned",
-        "async", "await", "actor", "any"
+        "async", "await", "actor", "any", "\t"
     ] as Set<String>).union(accessControlKeywords)
 
     static let accessControlKeywords: Set<String> = [
@@ -100,18 +99,9 @@ private extension SwiftGrammar {
 
     struct TabulationRule: SyntaxRule {
         var tokenType: TokenType { return .tabulation }
-        private let strToken: Set<String> = ["\t"]
-        
+
         func matches(_ segment: Segment) -> Bool {
-            if(segment.tokens.current.hasPrefix("\t")) {
-                return true
-            }
-            
-            if(segment.tokens.current.hasSuffix("\t")) {
-                return true
-            }
-            
-            return false
+            return segment.tokens.current.contains("\t")
         }
     }
     

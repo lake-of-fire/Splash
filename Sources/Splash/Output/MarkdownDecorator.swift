@@ -32,7 +32,7 @@ public struct MarkdownDecorator {
                 continue
             }
 
-            var code = component.trimmingCharacters(in: .whitespaces)
+            var code = component.trimmingCharacters(in: .whitespacesAndNewlines)
 
             if code.hasPrefix(skipHighlightingPrefix) {
                 let charactersToDrop = skipHighlightingPrefix + "\n"
