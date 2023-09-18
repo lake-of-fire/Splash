@@ -40,7 +40,13 @@ public struct MarkdownDecorator {
                 let charactersToDrop = skipHighlightingPrefix + "\n"
                 code = code.dropFirst(charactersToDrop.count).escapingHTMLEntities()
             } else if code.lowercased().hasPrefix("yaml") || code.lowercased().hasPrefix("yml") {
-                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: "yml"), grammar: YamlGrammar()).highlight(code)
+                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: YamlGrammar()).highlight(code)
+            } else if code.lowercased().hasPrefix("kotlin") {
+                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: KotlinGrammar()).highlight(code)
+            } else if code.lowercased().hasPrefix("python") || code.lowercased().hasPrefix("py") {
+                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: PythonGrammar()).highlight(code)
+            } else if code.lowercased().hasPrefix("dart") {
+                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: DartGrammar()).highlight(code)
             } else {
                 code = highlighter.highlight(code)
             }
