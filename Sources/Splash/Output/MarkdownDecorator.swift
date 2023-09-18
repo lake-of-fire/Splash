@@ -47,6 +47,8 @@ public struct MarkdownDecorator {
                 code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: PythonGrammar()).highlight(code)
             } else if code.lowercased().hasPrefix("dart") {
                 code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: DartGrammar()).highlight(code)
+            } else if code.lowercased().hasPrefix("javascript") || code.lowercased().hasPrefix("js") {
+                code = SyntaxHighlighter(format: HTMLOutputFormat(classPrefix: self.classPrefix), grammar: JavaScriptGrammar()).highlight(code)
             } else {
                 code = highlighter.highlight(code)
             }
