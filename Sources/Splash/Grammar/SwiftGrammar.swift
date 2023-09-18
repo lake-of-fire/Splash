@@ -199,7 +199,7 @@ private extension SwiftGrammar {
                 return false
             }
 
-            return !segment.isWithinStringInterpolation
+            return !segment.isWithinMultiLineStringInterpolation
         }
     }
 
@@ -644,6 +644,55 @@ private extension Segment {
         return true
     }
 
+    //this code come from https://github.com/JohnSundell/Splash/pull/131/commits/3035ea1b35cea567f9ddbf50cd029c512238dba5
+    //commit by hishnash
+    var isWithinMultiLineStringInterpolation: Bool {
+        let delimiter = "\\("
+
+        if tokens.current == delimiter || tokens.previous == delimiter {
+            return true
+        }
+
+        var unbalancedClosedParenthesis = 0
+        for token in tokens.all.lazy.reversed() {
+            var previousChar: Character? = nil
+            if token.hasSuffix("\"\"\"") {
+                return false
+            }
+
+            for char in token.lazy.reversed() {
+                if previousChar == "(" {
+                    if char != "\\" {
+                        if unbalancedClosedParenthesis > 0 {
+                            unbalancedClosedParenthesis -= 1
+                        }
+                    } else {
+                        continue
+                    }
+                }
+
+                previousChar = char
+                switch char {
+                case ")":
+                    unbalancedClosedParenthesis += 1
+                default:
+                    previousChar = char
+                }
+            }
+
+            if token.hasPrefix(delimiter) {
+                return unbalancedClosedParenthesis == 0
+            }
+
+            if previousChar == "(" {
+                if unbalancedClosedParenthesis > 0 {
+                    unbalancedClosedParenthesis -= 1
+                }
+            }
+        }
+        return false
+    }
+    
     var isWithinRawStringInterpolation: Bool {
         // Quick fix for supporting single expressions within raw string
         // interpolation, a proper fix should be developed ASAP.
