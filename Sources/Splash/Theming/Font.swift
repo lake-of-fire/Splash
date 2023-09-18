@@ -63,7 +63,7 @@ internal extension Font {
         #if os(iOS)
         font = UIFont(name: "Menlo-Regular", size: CGFloat(size))
         #else
-        font = load(fromPath: "/Library/Fonts/Courier New.ttf")
+        font = NSFont(name: "SFMono-Regular", size: CGFloat(size))
         #endif
 
         return font ?? .systemFont(ofSize: CGFloat(size))
