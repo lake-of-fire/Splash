@@ -100,7 +100,7 @@ private extension Tokenizer {
             case .whitespace, .newline, .tab:
                 guard var segment = segments.current else {
                     var segment = makeSegment(with: component, at: nextIndex)
-                    segment.trailingWhitespace = component.token
+                    segment.trailingWhitespace = (component.token == " ") ? "" : component.token
                     segment.isLastOnLine = component.isNewline
                     segments.current = segment
                     return segment.isLastOnLine ? finish(segment, with: component, at: nextIndex) : next()
