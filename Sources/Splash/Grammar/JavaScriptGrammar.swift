@@ -78,8 +78,14 @@ private extension JavaScriptGrammar {
 
     struct CommentRule: SyntaxRule {
         var tokenType: TokenType { return .comment }
-
+        
         func matches(_ segment: Segment) -> Bool {
+            if segment.tokens.current.hasPrefix("/*") {
+                if segment.tokens.current.hasSuffix("*/") {
+                    return true
+                }
+            }
+            
             if segment.tokens.current.hasPrefix("//") {
                 return true
             }
@@ -88,12 +94,14 @@ private extension JavaScriptGrammar {
                 return true
             }
 
-            if segment.tokens.current.isAny(of: "/*", "*/") {
+            if segment.tokens.current.isAny(of: "/*", "/**", "*/") {
                 return true
             }
 
-            return !segment.tokens.containsBalancedOccurrences(of: "/*", and: "*/")
+            let multiLineStartCount = segment.tokens.count(of: "/*") + segment.tokens.count(of: "/**")
+            return multiLineStartCount != segment.tokens.count(of: "*/")
         }
+    }
     }
 
     struct MultiLineStringRule: SyntaxRule {
