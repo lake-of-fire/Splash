@@ -102,7 +102,6 @@ private extension JavaScriptGrammar {
             return multiLineStartCount != segment.tokens.count(of: "*/")
         }
     }
-    }
 
     struct MultiLineStringRule: SyntaxRule {
         var tokenType: TokenType { return .string }
