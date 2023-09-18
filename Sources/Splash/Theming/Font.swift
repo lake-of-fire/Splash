@@ -61,7 +61,8 @@ internal extension Font {
         let font: Loaded?
 
         #if os(iOS)
-        font = UIFont(name: "Menlo-Regular", size: CGFloat(size))
+        //font = UIFont(name: "Menlo-Regular", size: CGFloat(size))
+        font = UIFont(name: "SFMono-Regular", size: CGFloat(size))
         #else
         font = NSFont(name: "SFMono-Regular", size: CGFloat(size))
         #endif
